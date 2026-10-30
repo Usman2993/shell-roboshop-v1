@@ -4,6 +4,7 @@ user_id=$(id -u)
 
 logs_folder="/var/log/roboshop"
 logs_file="${logs_folder}/${0}.log"
+DOMAIN_NAME="usdaws92s.store"
 R="\e[31m"
 G="\e[32m"
 Y="\e[33m"
@@ -45,6 +46,28 @@ if [ $? -ne 0 ]; then
 else
     echo -e "$(timestamp) [INFO] Roboshop system user already exists...${Y}SKIPPING${N}" | tee -a "$logs_file"
 fi  
+
+mkdir -p /app
+validate $? "Roboshop application folder creation"
+
+curl -L -o /tmp/catalogue.zip https://raw.githubusercontent.com/daws-92s/roboshop-documentation/refs/heads/main/artifacts/catalogue-v4.zip
+validate $? "Roboshop catalogue artifact download"
+
+cd /app
+unzip /tmp/catalogue.zip &>> $logs_file
+validate $? "Roboshop catalogue artifact unzip"
+
+npm install &>> $logs_file
+validate $? "Roboshop catalogue dependencies installation"
+
+sed -i -e "s/DOMAIN_NAME/${DOMAIN_NAME}/" /etc/systemd/system/catalogue.service &>> $logs_file
+cp catalogue.service /etc/systemd/system/catalogue.service &>> $logs_file
+validate $? "Roboshop catalogue systemd service file setup"
+
+systemctl daemon-reload &>> $logs_file
+systemctl enable catalogue &>> $logs_file
+systemctl start catalogue &>> $logs_file
+validate $? "Enable and start Roboshop catalogue service"
 
 echo "$(timestamp) [INFO] time taken $SECONDS"
 echo "$(timestamp) [INFO] ====== Script completed execution ======" | tee -a "$logs_file"
