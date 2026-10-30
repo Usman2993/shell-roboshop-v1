@@ -81,7 +81,7 @@ cp "$scripts_dir/shipping.service" /etc/systemd/system/shipping.service &>> "$lo
 validate $? "Roboshop user systemd service file setup"
 
 dnf install mysql -y &>> $logs_file
-Validate $? "MySQL client installation"
+validate $? "MySQL client installation"
 
 systemctl daemon-reload &>> $logs_file
 systemctl enable shipping &>> $logs_file
