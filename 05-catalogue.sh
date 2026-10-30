@@ -81,8 +81,18 @@ validate $? "adding mongo repo"
 dnf install mongodb-mongosh -y
 validate $? "installing mongodb client"
 
-mongosh --host "mongodb.$DOMAIN_NAME" </app/db/master-data.js
-validate $? "load catalogue data"
+product_count=$(mongosh --host <MONGODB-SERVER-IPADDRESS> --quiet --eval 'db.getSiblingDB("catalogue").products.countDocuments()' 2>>$logs_file)
+validate $? "counting products in catalogue database"
+
+if [ "$product_count" -eq 0 ]; then
+    mongosh --host "mongodb.$DOMAIN_NAME" </app/db/master-data.js
+    validate $? "load catalogue data"
+else
+echo -e "$(timestamp) [INFO] Catalogue data already exists in database...${Y}SKIPPING${N}" | tee -a "$logs_file"
+fi  
+
+systemctl restart catalogue &>> $logs_file
+validate $? "Roboshop catalogue service restart"
 
 echo "$(timestamp) [INFO] time taken $SECONDS"
 echo "$(timestamp) [INFO] ====== Script completed execution ======" | tee -a "$logs_file"
