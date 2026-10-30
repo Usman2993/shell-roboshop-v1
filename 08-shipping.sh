@@ -83,6 +83,9 @@ validate $? "Roboshop user systemd service file setup"
 dnf install mysql -y &>> $logs_file
 validate $? "MySQL client installation"
 
+mysql -h "mysql.$DOMAIN_NAME" -uroot -pRoboShop@1 < /app/db/master-data.sql
+validate $? "Roboshop shipping database setup"
+
 systemctl daemon-reload &>> $logs_file
 systemctl enable shipping &>> $logs_file
 systemctl start shipping &>> $logs_file
