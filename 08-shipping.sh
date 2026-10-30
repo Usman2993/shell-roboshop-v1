@@ -83,8 +83,16 @@ validate $? "Roboshop user systemd service file setup"
 dnf install mysql -y &>> $logs_file
 validate $? "MySQL client installation"
 
-mysql -h "mysql.$DOMAIN_NAME" -uroot -pRoboShop@1 < /app/db/master-data.sql
-validate $? "Roboshop shipping database setup"
+count=$(mysql -h "mysql.$DOMAIN_NAME" -uroot -pRoboShop@1 -N -B -e "SELECT COUNT(*) FROM cities.cities;" 2>> $logs_file)
+if [ -z "$count" ] || [ "$count" -eq 0 ]; then
+    mysql -h "mysql.$DOMAIN_NAME" -uroot -pRoboShop@1 < /app/db/master-data.sql
+    validate $? "Roboshop shipping database setup"
+else
+echo -e "$(timestamp) [INFO] master database already exists...${Y}SKIPPING${N}" | tee -a "$logs_file"
+fi    
+
+mysql -h "mysql.$DOMAIN_NAME" -uroot -pRoboShop@1 < /app/db/app-user.sql
+validate $? "creating app user setup"
 
 systemctl daemon-reload &>> $logs_file
 systemctl enable shipping &>> $logs_file
