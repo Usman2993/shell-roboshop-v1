@@ -46,8 +46,5 @@ else
     echo -e "$(timestamp) [INFO] Roboshop system user already exists...${Y}SKIPPING${N}" | tee -a "$logs_file"
 fi  
 
-useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>> $logs_file
-validate $? "Roboshop system user creation"
-
 echo "$(timestamp) [INFO] time taken $SECONDS"
 echo "$(timestamp) [INFO] ====== Script completed execution ======" | tee -a "$logs_file"
