@@ -44,7 +44,7 @@ if [ $? -ne 0 ]; then
     validate $? "Roboshop system user creation"
 else
     echo -e "$(timestamp) [INFO] Roboshop system user already exists...${Y}SKIPPING${N}" | tee -a "$logs_file"
-fi
+fi  
 
 useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>> $logs_file
 validate $? "Roboshop system user creation"
