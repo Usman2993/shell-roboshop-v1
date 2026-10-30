@@ -60,7 +60,7 @@ validate $? "Roboshop catalogue artifact unzip"
 npm install &>> $logs_file
 validate $? "Roboshop catalogue dependencies installation"
 
-sed -i -e "s/DOMAIN_NAME/${DOMAIN_NAME}/" /etc/systemd/system/catalogue.service &>> $logs_file
+sed -i -e "s/DOMAIN_NAME/${DOMAIN_NAME}/" catalogue.service &>> $logs_file
 cp catalogue.service /etc/systemd/system/catalogue.service &>> $logs_file
 validate $? "Roboshop catalogue systemd service file setup"
 
