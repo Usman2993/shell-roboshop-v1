@@ -59,10 +59,10 @@ cd /app
 unzip /tmp/payment.zip &>> $logs_file
 validate $? "Roboshop payment artifact unzip"
 
-python3.14 -m venv /app/.venv
+python3.14 -m venv /app/.venv &>> $logs_file
 validate $? "Roboshop payment virtual environment setup"
 
-/app/.venv/bin/pip install -r requirements.txt
+/app/.venv/bin/pip install -r requirements.txt &>> $logs_file
 validate $? "Roboshop payment dependencies installation"
 
 sed -i -e "s/DOMAIN_NAME/${DOMAIN_NAME}/" "$scripts_dir/payment.service" &>> "$logs_file"
@@ -73,7 +73,7 @@ validate $? "Roboshop user systemd service file setup"
 
 systemctl daemon-reload &>> $logs_file
 systemctl enable payment &>> $logs_file
-systemctl start payment 
+systemctl start payment &>> $logs_file
 validate $? "Enable and start Roboshop payment service"
 
 echo "$(timestamp) [INFO] time taken $SECONDS"
