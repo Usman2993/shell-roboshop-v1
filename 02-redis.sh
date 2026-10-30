@@ -44,3 +44,6 @@ validate $? "Redis bind address change"
 systemctl enable redis &> $logs_file
 systemctl restart redis
 validate $? "Enable and start Redis"
+
+echo "$(timestamp) [INFO] time taken $SECONDS"
+echo "$(timestamp) [INFO] ====== Script completed execution ======" | tee -a "$logs_file"
